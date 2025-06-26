@@ -17,7 +17,7 @@ export function LandingPage({ onStartChat }: LandingPageProps) {
   return (
     <Card className="w-full max-w-md shadow-2xl">
       <CardHeader className="text-center">
-        <CardTitle className="text-3xl font-bold">Welcome to AnonChat</CardTitle>
+        <CardTitle className="text-3xl font-bold">Welcome to WhisperNet</CardTitle>
         <CardDescription>Start a random video chat with a stranger.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

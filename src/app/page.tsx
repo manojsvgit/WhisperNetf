@@ -246,7 +246,7 @@ export default function Home() {
        <header className="absolute top-0 left-0 w-full p-4 sm:p-6">
         <div className="flex items-center gap-2">
           <Logo className="h-8 w-8 text-primary-foreground fill-primary" />
-          <h1 className="text-2xl font-bold text-foreground">AnonChat</h1>
+          <h1 className="text-2xl font-bold text-foreground">WhisperNet</h1>
         </div>
       </header>
       <main className="flex flex-1 w-full items-center justify-center p-4">
