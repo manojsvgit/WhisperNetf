@@ -4,47 +4,18 @@ import { VideoPlayer } from "./video-player";
 import { TextChat } from "./text-chat";
 import { ChatControls } from "./chat-controls";
 import { useToast } from "@/hooks/use-toast";
-import { useState, useEffect } from "react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useState } from "react";
 
 type ChatInterfaceProps = {
   onEndChat: () => void;
+  localStream: MediaStream | null;
+  remoteStream: MediaStream | null;
 };
 
-export function ChatInterface({ onEndChat }: ChatInterfaceProps) {
+export function ChatInterface({ onEndChat, localStream, remoteStream }: ChatInterfaceProps) {
   const { toast } = useToast();
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
-  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    let stream: MediaStream | undefined;
-    const getCameraPermission = async () => {
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        setLocalStream(stream);
-        setHasCameraPermission(true);
-      } catch (error) {
-        console.error('Error accessing camera:', error);
-        setHasCameraPermission(false);
-        toast({
-          variant: 'destructive',
-          title: 'Camera Access Denied',
-          description: 'Please enable camera permissions in your browser settings to use this app.',
-        });
-      }
-    };
-
-    getCameraPermission();
-
-    return () => {
-      // Clean up stream when component unmounts
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-      }
-    }
-  }, [toast]);
 
   const handleReport = () => {
     toast({
@@ -54,15 +25,7 @@ export function ChatInterface({ onEndChat }: ChatInterfaceProps) {
   };
 
   const handleDisconnect = () => {
-    if (localStream) {
-        localStream.getTracks().forEach(track => track.stop());
-    }
-    setLocalStream(null);
     onEndChat();
-    toast({
-      title: "Chat Ended",
-      description: "You have been disconnected. Searching for a new partner...",
-    });
   };
 
   const toggleMute = () => {
@@ -83,21 +46,12 @@ export function ChatInterface({ onEndChat }: ChatInterfaceProps) {
       }
   };
 
-
   return (
     <div className="w-full max-w-7xl h-[85vh] md:h-[75vh] flex flex-col lg:flex-row gap-4">
       <div className="flex-1 flex flex-col gap-4">
-        {hasCameraPermission === false && (
-            <Alert variant="destructive">
-              <AlertTitle>Camera Access Required</AlertTitle>
-              <AlertDescription>
-                Please allow camera access to use this feature. Refresh the page after granting permissions.
-              </AlertDescription>
-            </Alert>
-        )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 h-full">
           <VideoPlayer name="You" stream={localStream ?? undefined} isMuted={true} isVideoOff={isVideoOff} />
-          <VideoPlayer name="Stranger" />
+          <VideoPlayer name="Stranger" stream={remoteStream ?? undefined} />
         </div>
         <ChatControls
           onDisconnect={handleDisconnect}
